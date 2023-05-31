@@ -144,30 +144,38 @@
                 <?php endif; ?>
                 <?php foreach ($this->pages as $page): ?>
                 <div class="card shadow border-0 rounded-4 mb-5">
-                    <div class="card-body p-5">
+                    <div class="card-body p-4">
                         <div class="row align-items-center gx-5">
                             <div class="col text-center text-lg-start mb-4 mb-lg-0">
-                                <div class="bg-light p-4 rounded-4">
-                                    <div class="text-secondary fw-bolder mb-2">Homepage</div>
-                                    <div class="mb-2">
-                                        <div class="small fw-bolder">May 13, 2023</div>
+                                <div class="bg-light p-3 rounded-4">
+                                    <div class="text-secondary fw-bolder mb-3"><?=$page->title?></div>
+                                    <div class="mb-1">
+                                        <div class="small fw-bolder">
+                                            <?php echo date("M d, Y", strtotime($page->created)) ?>
+                                        </div>
                                     </div>
                                     <div class="fst-italic">
-                                        <div class="small text-muted">Author: Ime Prezime</div>
+                                        <div class="small text-muted">
+                                            <?php echo date("H:i", strtotime($page->created)) ?>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4"><div>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus laudantium, voluptatem quis repellendus eaque sit animi illo ipsam amet officiis corporis sed aliquam non voluptate corrupti excepturi maxime porro fuga.</div></div>
+                            <div class="col-lg-4">
+                                <div>
+                                    <?=$page->description?>
+                                </div>
+                            </div>
                             <div class="col-lg-4">
                                 <div class="d-flex align-items-center justify-content-between mb-2">
-                                    <a class="btn btn-light px-3 py-1" href="#!">
-                                        <div class="d-inline-block bi bi-pencil me-2"></div>
+                                    <a class="btn btn-light px-3 py-1" href="?p=page&a=editPage&id=<?=$page->id?>">
+                                        <div class="d-inline-block bi bi-gear me-2"></div>
                                         Edit
                                     </a>
-                                    <a class="btn btn-danger px-3 py-1" href="#!">
-                                        <div class="d-inline-block bi bi-person-x me-2"></div>
+                                    <button type="button" class="btn btn-danger px-3 py-1" data-bs-toggle="modal" data-bs-target="#deletePageModal" data-bs-whatever="@delete|<?=$page->id?>|<?=$page->title?>">
+                                        <div class="d-inline-block bi bi-window-x me-2"></div>
                                         Delete
-                                    </a>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +209,7 @@
                                     <div class="d-flex align-items-center justify-content-between bg-light rounded-4 p-3 h-100">
                                         <?= $menuItem->display_text; ?>
                                         <div class="d-flex align-items-center">
-                                            <button type="button" class="btn btn-light px-2 py-1 me-2" data-bs-toggle="modal" data-bs-target="#editMenuItemModal" data-bs-whatever="@edit|<?=$menuItem->id?>|<?=$menuItem->display_text?>|<?=$menuItem->page_slug?>">
+                                            <button type="button" class="btn btn-light px-2 py-1 me-2" data-bs-toggle="modal" data-bs-target="#editMenuItemModal" data-bs-whatever="@edit|<?=$menuItem->id?>|<?=$menuItem->display_text?>|<?=$menuItem->page_id?>|<?=$menuItem->parent?>">
                                                 <div class="d-inline-block bi bi-pencil-square"></div>
                                             </button>
                                             <button type="button" class="btn btn-danger px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteMenuItemModal" data-bs-whatever="@delete|<?=$menuItem->id?>|<?=$menuItem->display_text?>">
@@ -215,7 +223,7 @@
                                     <div class="d-flex align-items-center justify-content-between bg-light rounded-4 p-3 h-100">
                                         <?= $menuItem->display_text; ?>
                                         <div class="d-flex align-items-center">
-                                            <button type="button" class="btn btn-light px-2 py-1 me-2" data-bs-toggle="modal" data-bs-target="#editMenuItemModal" data-bs-whatever="@edit|<?=$menuItem->id?>|<?=$menuItem->display_text?>|<?=$menuItem->page_slug?>">
+                                            <button type="button" class="btn btn-light px-2 py-1 me-2" data-bs-toggle="modal" data-bs-target="#editMenuItemModal" data-bs-whatever="@edit|<?=$menuItem->id?>|<?=$menuItem->display_text?>|<?=$menuItem->page_id?>|<?=$menuItem->parent?>">
                                                 <div class="d-inline-block bi bi-pencil-square"></div>
                                             </button>
                                             <button type="button" class="btn btn-danger px-2 py-1" data-bs-toggle="modal" data-bs-target="#deleteMenuItemModal" data-bs-whatever="@delete|<?=$menuItem->id?>|<?=$menuItem->display_text?>">
@@ -391,7 +399,7 @@
 <div class="modal-dialog">
     <div class="modal-content">
     <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editUserRoleModalLabel">Edit user</h1>
+        <h1 class="modal-title fs-5" id="editUserRoleModalLabel">Edit user role</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
@@ -439,6 +447,62 @@
 </div>
 </div>
 
+<!-- Add page modal -->
+<div class="modal fade" id="addPageModal" tabindex="-1" aria-labelledby="addPageModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="addPageModalLabel">New page</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form id="addPageForm" method="post" action="?p=page&a=addPage">
+        <div class="mb-3">
+            <label for="page-title" class="col-form-label">Page title:</label>
+            <input type="text" class="form-control" id="page-title" name="page-title" required>
+        </div>
+        <div class="mb-3">
+            <label for="page-description" class="col-form-label">Page description:</label>
+            <input type="text" class="form-control" id="page-description" name="page-description" required>
+        </div>
+        <div class="mb-3">
+            <label for="page-slug" class="col-form-label">Page slug:</label>
+            <input type="text" class="form-control" id="page-slug" name="page-slug" required>
+        </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="addPageForm" class="btn btn-primary" name="addPage">Add page</button>
+    </div>
+    </div>
+</div>
+</div>
+
+<!-- Delete page modal -->
+<div class="modal fade" id="deletePageModal" tabindex="-1" aria-labelledby="deletePageModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <h1 class="modal-title fs-5" id="deletePageModalLabel">Delete page</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <form id="deletePageForm" method="post" action="?p=page&a=deletePage">
+            <div class="mb-3" id="deleteWarning">
+                Confirm deletion of page: 
+            </div>
+            <input type="number" class="form-control" id="page-id" name="page-id" hidden>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="deletePageForm" class="btn btn-danger" name="deletePage">Delete page</button>
+    </div>
+    </div>
+</div>
+</div>
+
 <!-- Add menu item modal -->
 <div class="modal fade" id="addMenuItemModal" tabindex="-1" aria-labelledby="addMenuItemModalLabel" aria-hidden="true">
 <div class="modal-dialog">
@@ -454,11 +518,16 @@
             <input type="text" class="form-control" id="menu-item-display-text" name="menu-item-display-text" required>
         </div>
         <div class="mb-3">
-            <label for="menu-item-page-slug" class="col-form-label">Page slug:</label>
-            <input type="text"class="form-control" id="menu-item-page-slug" name="menu-item-page-slug" required>
+            <label for="menu-item-page-slug" class="col-form-label">Page:</label>
+            <select class="form-select" aria-label="Select page" id="menu-item-page-id" name="menu-item-page-id">
+                <option selected>Select a page</option>
+                <?php foreach ($this->pages as $page): ?>
+                <option value="<?=$page->id?>"><?=$page->title?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
         <div class="mb-3">
-            <label for="menu-item-parent" class="col-form-label">Parent (select root if it's main menu item):</label>
+            <label for="menu-item-parent" class="col-form-label">Parent:</label>
             <select class="form-select" aria-label="Select menu item" id="menu-item-parent" name="menu-item-parent">
                 <option value="0" selected>Main menu</option>
                 <?php foreach ($this->menuItems as $menuItem): ?>
@@ -479,29 +548,44 @@
 </div>
 
 <!-- Edit menu item modal -->
-<div class="modal fade" id="editUserRoleModal" tabindex="-1" aria-labelledby="editUserRoleModalLabel" aria-hidden="true">
+<div class="modal fade" id="editMenuItemModal" tabindex="-1" aria-labelledby="editMenuItemModalLabel" aria-hidden="true">
 <div class="modal-dialog">
     <div class="modal-content">
     <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editUserRoleModalLabel">Edit user</h1>
+        <h1 class="modal-title fs-5" id="editMenuItemModalLabel">Edit menu item</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
-        <form id="editUserRoleForm" method="post" action="?p=page&a=editUserRole">
+        <form id="editMenuItemForm" method="post" action="?p=page&a=editMenuItem">
         <div class="mb-3">
-            <label for="user-role-name" class="col-form-label">Name:</label>
-            <input type="text" class="form-control" id="user-role-name" name="user-role-name" required>
+            <label for="menu-item-display-text" class="col-form-label">Display text:</label>
+            <input type="text" class="form-control" id="menu-item-display-text" name="menu-item-display-text" required>
         </div>
         <div class="mb-3">
-            <label for="user-role-slug" class="col-form-label">Slug:</label>
-            <input type="text" class="form-control" id="user-role-slug" name="user-role-slug" required>
+            <label for="menu-item-page-slug" class="col-form-label">Page:</label>
+            <select class="form-select" aria-label="Select page" id="menu-item-page-id" name="menu-item-page-id">
+                <option selected>Select a page</option>
+                <?php foreach ($this->pages as $page): ?>
+                <option value="<?=$page->id?>"><?=$page->title?></option>
+                <?php endforeach; ?>
+            </select>
         </div>
-        <input type="number" class="form-control" id="user-role-id" name="user-role-id" hidden>
+        <div class="mb-3">
+            <label for="menu-item-parent" class="col-form-label">Parent:</label>
+            <select class="form-select" aria-label="Select menu item" id="menu-item-parent" name="menu-item-parent">
+                <option value="0" selected>Main menu</option>
+                <?php foreach ($this->menuItems as $menuItem): ?>
+                    <?php if ($menuItem->parent == 0): ?>
+                <option value="<?=$menuItem->id?>"><?=$menuItem->display_text?></option>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </select>
+        </div>
         </form>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-        <button type="submit" form="editUserRoleForm" class="btn btn-primary" name="editUserRole">Save changes</button>
+        <button type="submit" form="editMenuItemForm" class="btn btn-primary" name="editMenuItem">Save changes</button>
     </div>
     </div>
 </div>

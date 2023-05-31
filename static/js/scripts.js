@@ -105,10 +105,77 @@ if (deleteUserRoleModal) {
   })
 }
 
+const deletePageModal = document.getElementById('deletePageModal')
+if (deletePageModal) {
+  deletePageModal.addEventListener('show.bs.modal', event => {
+    var button = event.relatedTarget
+    var data = button.getAttribute('data-bs-whatever').split("|")
+    var pageId = data[1]
+    var pageTitle = data[2]
+
+    var modalTitle = deletePageModal.querySelector('.modal-title')
+    modalTitle.innerHTML = "Delete page " + pageTitle
+    var modalWarning = deletePageModal.querySelector('#deleteWarning')
+    modalWarning.innerHTML = "Confirm deletion of page: " + pageTitle + "."
+    var idInput = deletePageModal.querySelector('#page-id')
+    idInput.setAttribute("value", pageId);
+
+  })
+}
+
 const addMenuItemModal = document.getElementById('addMenuItemModal')
 if (addMenuItemModal) {
     addMenuItemModal.addEventListener('show.bs.modal', event => {
     const button = event.relatedTarget
     const action = button.getAttribute('data-bs-whatever')
+  })
+}
+
+const editMenuItemModal = document.getElementById('editMenuItemModal')
+if (editMenuItemModal) {
+  editMenuItemModal.addEventListener('show.bs.modal', event => {
+    var button = event.relatedTarget
+    var data = button.getAttribute('data-bs-whatever').split("|")
+    var menuItemId = data[1]
+    var menuItemDisplayText = data[2]
+    var menuItemPageId = data[3]
+    var menuItemParentId = data[4]
+    var modalTitle = editMenuItemModal.querySelector('#editMenuItemModalLabel')
+    modalTitle.innerHTML = "Edit menu item " + menuItemDisplayText
+    var displayTextInput = editMenuItemModal.querySelector('input#menu-item-display-text')
+    displayTextInput.setAttribute("value", menuItemDisplayText);
+    var pageSelect = editMenuItemModal.querySelector('#menu-item-page-id')
+    pageSelect.querySelectorAll("option").forEach(option => {
+        if (option.value == menuItemPageId) {
+            option.setAttribute("selected", true);
+        }
+    });
+    var parentSelect = editMenuItemModal.querySelector('#menu-item-parent')
+    parentSelect.querySelectorAll("option").forEach(option => {
+        if (option.value == menuItemParentId) {
+            option.setAttribute("selected", true);
+        }
+    });
+    var idInput = editMenuItemModal.querySelector('#menu-item-id')
+    idInput.setAttribute("value", menuItemId);
+
+  })
+}
+
+const deleteMenuItemModal = document.getElementById('deleteMenuItemModal')
+if (deleteMenuItemModal) {
+  deleteMenuItemModal.addEventListener('show.bs.modal', event => {
+    var button = event.relatedTarget
+    var data = button.getAttribute('data-bs-whatever').split("|")
+    var menuItemId = data[1]
+    var menuItemDisplayText = data[2]
+
+    var modalTitle = deleteMenuItemModal.querySelector('.modal-title')
+    modalTitle.innerHTML = "Delete menu item " + menuItemDisplayText
+    var modalWarning = deleteMenuItemModal.querySelector('#deleteWarning')
+    modalWarning.innerHTML = "Confirm deletion of menu item: " + menuItemDisplayText + "."
+    var idInput = deleteMenuItemModal.querySelector('#menu-item-id')
+    idInput.setAttribute("value", menuItemId);
+
   })
 }

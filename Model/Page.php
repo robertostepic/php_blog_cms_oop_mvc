@@ -23,6 +23,18 @@ class Page extends Model
     public function deletePage($id) {
         return $this->delete("pages", $id);
     } 
+
+    public function addImage($arrData) {
+        return $this->add("images", $arrData);
+    }
+
+    public function getAllImages() {
+        return $this->getAll("images");
+    }
+
+    public function getImageById($id) {
+        return $this->getById("images", $id);
+    }
     
     public function getAllMenuItems() {
         return $this->getAll("menu_items");

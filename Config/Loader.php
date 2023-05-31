@@ -9,14 +9,14 @@ require_once __DIR__ . '/Pattern/Singleton.trait.php';
 
 class Loader
 {
-    use Singleton;
+    use Singleton; // koristi Singleton kako se ne bi vise puta stvarao
 
     public function init()
     {
-        spl_autoload_register(array(__CLASS__, '_loadClasses'));
+        spl_autoload_register(array(__CLASS__, '_loadClasses')); // automatsko ucitavanje klasa
     }
 
-    private function _loadClasses($sClassName)
+    private function _loadClasses($sClassName) // trazenje filea za zeljenu klasu
     {
         $sClassName = str_replace(array(__NAMESPACE__, 'CMS', '\\'), '/', $sClassName);
 
